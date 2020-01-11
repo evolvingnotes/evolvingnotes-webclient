@@ -1,66 +1,33 @@
-import "dart:convert";
-import "constants.dart" as C;
 import "package:flutter/material.dart";
-import "package:http/http.dart" as http;
+import "login.dart" as login;
+import "dashboard.dart" as dashboard;
+import "global.dart" as G;
+import "coursepage.dart" as coursepage;
 
 void main() => runApp(App());
-
-Future<Response> requestGET(String url) async {
-  final response = await http.get(url);
-  if (response.statusCode != 200) throw Exception("Failed to load");
-  return Response.fromJson(json.decode(response.body));
-}
-
-class Response {
-  final String body;
-
-  Response({this.body});
-
-  factory Response.fromJson(Map<String, dynamic> json) {
-    return Response(body: json["body"]);
-  }
-}
 
 class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        backgroundColor: Colors.grey[200],
-        body: Home(),
+      // title: "Evolving Notes",
+      initialRoute: "/login",
+      routes: {
+        "/login": (context) => login.LoginScreen(),
+        "/dashboard": (context) => dashboard.Dashboard(),
+        "/course": (context) => coursepage.CoursePage(),
+      },
+      theme: ThemeData(
+        primaryColor: Colors.pink,
+        accentColor: Colors.pink,
+        backgroundColor: Colors.grey[100],
       ),
-    );
-  }
-}
-
-class Home extends StatefulWidget {
-  @override
-  _HomeState createState() => _HomeState();
-}
-
-class _HomeState extends State<Home> {
-  Future<Response> request;
-
-  @override
-  void initState() {
-    super.initState();
-    request = requestGET(C.api);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: FutureBuilder<Response>(
-        future: request,
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return Text(snapshot.data.body);
-          } else if (snapshot.hasError) {
-            return Text("${snapshot.error}");
-          }
-          return CircularProgressIndicator();
-        },
-      ),
+      builder: (context, child) {
+        return ScrollConfiguration(
+          behavior: G.DefaultScroll(),
+          child: child,
+        );
+      },
     );
   }
 }

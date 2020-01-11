@@ -8,6 +8,8 @@
 .buildlog/
 .history
 .svn/
+build/app/
+build/kotlin/
 
 # IntelliJ related
 *.iml
